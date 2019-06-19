@@ -1,12 +1,15 @@
 package me.abhi.whitelistgui.util;
 
 import me.abhi.whitelistgui.WhitelistGUI;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
+import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerUtil {
 
@@ -18,7 +21,15 @@ public class PlayerUtil {
                 break;
             }
             OfflinePlayer offlinePlayer = (OfflinePlayer) WhitelistGUI.getInstance().getServer().getWhitelistedPlayers().toArray()[i];
-            inventory.setItem((page == 1 ? i : i - (27 * (page - 1))), new ItemBuilder(Material.SKULL_ITEM).setName(ChatColor.YELLOW + offlinePlayer.getName()).setLore(ChatColor.RED + "Shift + Left Click to unwhitelist " + offlinePlayer.getName() + ".").toItemStack());
+            List<String> lore = new ArrayList();
+            lore.add(ChatColor.RED + "Shift + Left Click to unwhitelist " + offlinePlayer.getName() + ".");
+            ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+            SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+            skullMeta.setOwner(offlinePlayer.getName());
+            skullMeta.setDisplayName(ChatColor.YELLOW + offlinePlayer.getName());
+            skullMeta.setLore(lore);
+            skull.setItemMeta(skullMeta);
+            inventory.setItem((page == 1 ? i : i - (27 * (page - 1))), skull);
             if ((page == 1 ? i : i - (27 * (page - 1))) >= 26) {
                 nextPage = true;
             }
